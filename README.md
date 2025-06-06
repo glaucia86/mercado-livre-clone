@@ -381,7 +381,7 @@ graph TD
 
 ### Pré-requisitos
 
-- **Node.js** 18+ instalado
+- **Node.js** 20+ instalado
 - **npm** ou **yarn** como package manager
 - **Git** para clonagem
 
