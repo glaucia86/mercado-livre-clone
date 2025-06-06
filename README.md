@@ -27,7 +27,7 @@
 
 ## 🎯 Visão Geral
 
-Este projeto é uma implementação moderna de um marketplace e-commerce inspirado no MercadoLibre, desenvolvido como demonstração de arquitetura full-stack escalável. A aplicação combina um backend robusto em Express.js com um frontend responsivo em Next.js, implementando funcionalidades essenciais de e-commerce como busca, filtros, paginação e sistema de desconto.
+Este projeto é uma implementação moderna de um marketplace e-commerce inspirado no MercadoLibre, desenvolvido como demonstração de arquitetura full-stack escalável. A aplicação combina um frontend Next.js 14 com App Router e um backend Express.js, utilizando TypeScript para type safety completo.
 
 ### ✨ Destaques
 
@@ -41,152 +41,378 @@ Este projeto é uma implementação moderna de um marketplace e-commerce inspira
 
 ## 🏗️ Arquitetura
 
-### Diagrama da Arquitetura
+### 📐 Arquitetura em Camadas (Layered Architecture)
 
 ```mermaid
 graph TB
-    %% Frontend Layer
-    subgraph "🎨 Frontend (Next.js 14)"
-        UI[fa:fa-desktop UI Components]
-        Pages[fa:fa-file-code Pages & Routes]
-        Hooks[fa:fa-code Custom Hooks]
-        Services[fa:fa-plug API Services]
+    %% Presentation Layer
+    subgraph "🎨 Presentation Layer"
+        direction TB
+        UI[UI Components<br/>- ProductCard<br/>- Filters<br/>- Layout<br/>- Modal]
+        Pages[Pages & Routes<br/>- Home Page<br/>- Product Detail<br/>- App Router]
+        Hooks[Custom Hooks<br/>- useDebounce<br/>- useSearchDebounce<br/>- useLocalStorage]
         
-        UI --> Pages
-        Pages --> Hooks
-        Hooks --> Services
+        Pages --> UI
+        UI --> Hooks
     end
     
-    %% Backend Layer
-    subgraph "⚙️ Backend (Express.js)"
-        Routes[fa:fa-route Routes]
-        Controllers[fa:fa-cogs Controllers]
-        ServicesB[fa:fa-wrench Services]
-        Data[fa:fa-database JSON Data]
+    %% API Layer
+    subgraph "🌐 API Layer"
+        direction TB
+        Routes[Express Routes<br/>- /products<br/>- /products/:id<br/>- /health]
+        Middleware[Middleware<br/>- CORS<br/>- Error Handler<br/>- Logger]
+        Validation[Validation<br/>- Zod Schemas<br/>- Input Sanitization<br/>- Type Checking]
         
-        Routes --> Controllers
-        Controllers --> ServicesB
-        ServicesB --> Data
+        Routes --> Middleware
+        Routes --> Validation
+    end
+    
+    %% Business Logic Layer
+    subgraph "⚙️ Business Logic Layer"
+        direction TB
+        Controllers[Controllers<br/>- Product Controller<br/>- Search Controller<br/>- Discount Controller]
+        Services[Services<br/>- Product Service<br/>- Search Service<br/>- Filter Service]
+        Utils[Utilities<br/>- Price Calculator<br/>- Search Parser<br/>- Data Transformer]
+        
+        Controllers --> Services
+        Services --> Utils
+    end
+    
+    %% Data Access Layer
+    subgraph "💾 Data Access Layer"
+        direction TB
+        DataStore[JSON Data Store<br/>- products.json<br/>- categories.json<br/>- mock data]
+        FileSystem[File System<br/>- Read Operations<br/>- Data Parsing<br/>- Error Handling]
+        
+        DataStore --> FileSystem
     end
     
     %% External Services
-    subgraph "🌐 External"
-        CDN[fa:fa-cloud CDN Images]
-        Browser[fa:fa-chrome Browser Storage]
+    subgraph "🌐 External Services"
+        direction TB
+        CDN[CDN Images<br/>- Product Photos<br/>- Optimized Assets<br/>- Global Delivery]
+        Browser[Browser APIs<br/>- Local Storage<br/>- Session Storage<br/>- Cache API]
     end
     
-    %% Data Flow
-    Services -->|HTTP/REST| Routes
-    Routes -->|JSON Response| Services
+    %% Connections between layers
+    Hooks -->|HTTP Requests| Routes
+    Routes -->|Response| Hooks
+    Routes --> Controllers
+    Controllers --> Services
+    Services --> DataStore
     
-    UI -->|Load Images| CDN
-    Hooks -->|State Management| Browser
+    UI -->|Load Assets| CDN
+    Hooks -->|Store State| Browser
     
-    %% Technology Stack
-    subgraph "📚 Stack"
-        TS[TypeScript]
-        TW[TailwindCSS]
-        Zod[Zod Validation]
-        React[React 18]
-    end
+    %% Styling
+    classDef presentation fill:#e3f2fd,stroke:#1976d2,stroke-width:3px
+    classDef api fill:#f3e5f5,stroke:#7b1fa2,stroke-width:3px
+    classDef business fill:#fff3e0,stroke:#f57c00,stroke-width:3px
+    classDef data fill:#e8f5e8,stroke:#388e3c,stroke-width:3px
+    classDef external fill:#fce4ec,stroke:#c2185b,stroke-width:3px
     
-    Pages -.-> TS
-    UI -.-> TW
-    Controllers -.-> Zod
-    Hooks -.-> React
-    
-    classDef frontend fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-    classDef backend fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
-    classDef external fill:#fff3e0,stroke:#e65100,stroke-width:2px
-    classDef tech fill:#e8f5e8,stroke:#1b5e20,stroke-width:2px
-    
-    class UI,Pages,Hooks,Services frontend
-    class Routes,Controllers,ServicesB,Data backend
+    class UI,Pages,Hooks presentation
+    class Routes,Middleware,Validation api
+    class Controllers,Services,Utils business
+    class DataStore,FileSystem data
     class CDN,Browser external
-    class TS,TW,Zod,React tech
 ```
 
-### Fluxo de Dados
+### 🔄 Fluxo de Dados Detalhado
 
 ```mermaid
 sequenceDiagram
     participant U as 👤 User
-    participant F as 🎨 Frontend
-    participant API as ⚙️ Backend API
-    participant D as 📁 Data Store
+    participant UI as 🎨 UI Component
+    participant H as 🪝 Custom Hook
+    participant API as 🌐 API Layer
+    participant C as ⚙️ Controller
+    participant S as 🛠️ Service
+    participant D as 💾 Data Store
+    participant Cache as 🗄️ Cache
     
-    Note over U,D: Fluxo de Busca de Produtos
+    Note over U,Cache: Fluxo Completo de Busca de Produtos
     
-    U->>F: Digite termo de busca
-    F->>F: Aplica debounce (800ms)
-    F->>API: GET /api/products?search=termo
-    API->>API: Valida query com Zod
-    API->>D: Filtra produtos em JSON
-    D-->>API: Retorna produtos filtrados
-    API-->>F: JSON com paginação
-    F->>F: Atualiza estado + UI
-    F-->>U: Mostra resultados
+    U->>UI: Digite termo "smartphone"
+    UI->>UI: Mostra loading skeleton
+    UI->>H: Chama useSearchDebounce
+    H->>H: Aplica debounce (800ms)
     
-    Note over U,D: Aplicação de Desconto (Live Coding)
+    alt Cache Hit
+        H->>Cache: Verifica cache local
+        Cache-->>H: Retorna dados cached
+        H-->>UI: Atualiza com dados cached
+        UI-->>U: Mostra resultados instantâneos
+    else Cache Miss
+        H->>API: GET /api/products?search=smartphone
+        API->>API: Valida query com Zod
+        
+        alt Validação OK
+            API->>C: Chama ProductController
+            C->>S: Chama ProductService
+            S->>S: Aplica filtros e paginação
+            S->>D: Busca em products.json
+            D-->>S: Retorna produtos filtrados
+            S-->>C: Dados processados
+            C-->>API: Response formatada
+            API-->>H: JSON com produtos
+            H->>Cache: Salva no cache
+            H-->>UI: Atualiza estado
+            UI-->>U: Mostra resultados
+        else Validação Erro
+            API-->>H: Error 400
+            H-->>UI: Mostra erro de validação
+            UI-->>U: Feedback de erro
+        end
+    end
     
-    U->>F: Clica "Aplicar Desconto"
-    F->>F: Abre modal de desconto
-    U->>F: Define percentual (15%)
-    F->>API: POST /api/products/:id/discount
-    API->>API: Calcula novo preço
-    API->>D: Aplica desconto temporário
-    D-->>API: Produto com desconto
-    API-->>F: Produto atualizado
-    F->>F: Atualiza preço na tela
-    F-->>U: Feedback visual
+    Note over U,Cache: Aplicação de Desconto Dinâmico
+    
+    U->>UI: Clica "Aplicar Desconto 15%"
+    UI->>UI: Abre modal de confirmação
+    U->>UI: Confirma desconto
+    UI->>H: Chama applyDiscount
+    H->>API: POST /api/products/:id/discount
+    API->>C: ProductController.applyDiscount
+    C->>S: ProductService.calculateDiscount
+    S->>S: Calcula novo preço
+    S->>D: Atualiza temporariamente
+    D-->>S: Produto com desconto
+    S-->>C: Dados atualizados
+    C-->>API: Response com novo preço
+    API-->>H: Produto atualizado
+    H->>Cache: Invalida cache
+    H-->>UI: Atualiza preço na tela
+    UI->>UI: Animação de mudança de preço
+    UI-->>U: Feedback visual de sucesso
 ```
 
-### Arquitetura de Componentes
+### 🏗️ Arquitetura de Componentes React
 
 ```mermaid
-graph LR
-    subgraph "🏠 Pages"
-        Home[HomePage]
-        Detail[ProductDetail]
+graph TD
+    %% Root Level
+    subgraph "🏠 Application Root"
+        App[App Router<br/>layout.tsx]
+        Global[Global Providers<br/>- Error Boundary<br/>- Theme Provider]
     end
     
-    subgraph "🧩 Components"
-        ProductCard[ProductCard]
-        Filters[Filters]
-        Layout[Layout]
-        Modal[DiscountModal]
+    %% Page Level
+    subgraph "📄 Page Components"
+        HomePage[Home Page<br/>- Product Listing<br/>- Search Interface]
+        ProductPage[Product Detail Page<br/>- Product Info<br/>- Related Products]
+        NotFound[404 Page<br/>- Error Handling]
     end
     
-    subgraph "🔧 Hooks"
-        useDebounce[useDebounce]
-        useSearch[useSearchDebounce]
+    %% Feature Components
+    subgraph "🧩 Feature Components"
+        ProductList[Product List<br/>- Grid Layout<br/>- Pagination<br/>- Loading States]
+        SearchBar[Search Bar<br/>- Auto-complete<br/>- Filters<br/>- Debounced Input]
+        ProductCard[Product Card<br/>- Image Gallery<br/>- Price Display<br/>- Actions]
+        Filters[Filter Panel<br/>- Category Filter<br/>- Price Range<br/>- Shipping Options]
     end
     
-    subgraph "🌐 Services"
-        API[API Service]
-        Utils[Utils]
+    %% UI Components
+    subgraph "🎨 UI Components"
+        Modal[Modal System<br/>- Discount Modal<br/>- Confirmation Dialog]
+        Button[Button Components<br/>- Primary/Secondary<br/>- Loading States]
+        Input[Input Components<br/>- Text Input<br/>- Search Input<br/>- Range Slider]
+        Card[Card Components<br/>- Product Card<br/>- Info Card]
+        Loading[Loading Components<br/>- Skeleton<br/>- Spinner<br/>- Progress Bar]
     end
     
-    Home --> ProductCard
-    Home --> Filters
-    Home --> useSearch
-    Detail --> Modal
-    Filters --> useDebounce
-    ProductCard --> API
-    Modal --> API
+    %% Custom Hooks
+    subgraph "🪝 Custom Hooks"
+        useSearch[useSearchDebounce<br/>- Debounced Search<br/>- Cache Management]
+        useProducts[useProducts<br/>- Product Fetching<br/>- State Management]
+        useFilters[useFilters<br/>- Filter Logic<br/>- URL Sync]
+        useLocalStorage[useLocalStorage<br/>- Persistence<br/>- Sync State]
+    end
     
-    API --> Utils
+    %% Services
+    subgraph "🌐 Services & Utils"
+        APIService[API Service<br/>- HTTP Client<br/>- Error Handling<br/>- Response Parsing]
+        CacheService[Cache Service<br/>- Local Storage<br/>- Session Storage<br/>- Memory Cache]
+        UtilsService[Utils<br/>- Price Formatter<br/>- Date Formatter<br/>- Validators]
+    end
     
-    classDef pages fill:#e3f2fd,stroke:#1976d2
-    classDef components fill:#f3e5f5,stroke:#7b1fa2
-    classDef hooks fill:#fff3e0,stroke:#f57c00
-    classDef services fill:#e8f5e8,stroke:#388e3c
+    %% Connections
+    App --> Global
+    Global --> HomePage
+    Global --> ProductPage
+    Global --> NotFound
     
-    class Home,Detail pages
-    class ProductCard,Filters,Layout,Modal components
-    class useDebounce,useSearch hooks
-    class API,Utils services
+    HomePage --> ProductList
+    HomePage --> SearchBar
+    HomePage --> Filters
+    
+    ProductPage --> ProductCard
+    ProductPage --> Modal
+    
+    ProductList --> ProductCard
+    ProductList --> Loading
+    
+    SearchBar --> Input
+    SearchBar --> Button
+    
+    ProductCard --> Card
+    ProductCard --> Button
+    ProductCard --> Modal
+    
+    Filters --> Input
+    Filters --> Button
+    
+    %% Hooks connections
+    HomePage --> useSearch
+    HomePage --> useProducts
+    HomePage --> useFilters
+    
+    ProductPage --> useProducts
+    ProductPage --> useLocalStorage
+    
+    ProductList --> useProducts
+    SearchBar --> useSearch
+    Filters --> useFilters
+    
+    %% Services connections
+    useSearch --> APIService
+    useProducts --> APIService
+    useProducts --> CacheService
+    useLocalStorage --> CacheService
+    
+    APIService --> UtilsService
+    CacheService --> UtilsService
+    
+    %% Styling
+    classDef root fill:#fff3e0,stroke:#f57c00,stroke-width:3px
+    classDef pages fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef features fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef ui fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    classDef hooks fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef services fill:#e0f2f1,stroke:#00695c,stroke-width:2px
+    
+    class App,Global root
+    class HomePage,ProductPage,NotFound pages
+    class ProductList,SearchBar,ProductCard,Filters features
+    class Modal,Button,Input,Card,Loading ui
+    class useSearch,useProducts,useFilters,useLocalStorage hooks
+    class APIService,CacheService,UtilsService services
 ```
+
+### 🌐 Diagrama de Infraestrutura e Deploy
+
+```mermaid
+graph TB
+    %% User Layer
+    subgraph "👥 Users"
+        Desktop[🖥️ Desktop Users]
+        Mobile[📱 Mobile Users]
+        Tablet[📱 Tablet Users]
+    end
+    
+    %% CDN Layer
+    subgraph "🌐 CDN & Load Balancer"
+        CDN[Cloudflare CDN<br/>- Static Assets<br/>- Image Optimization<br/>- Global Cache]
+        LB[Load Balancer<br/>- Traffic Distribution<br/>- SSL Termination<br/>- DDoS Protection]
+    end
+    
+    %% Frontend Layer
+    subgraph "🎨 Frontend (Vercel/Netlify)"
+        NextJS[Next.js Application<br/>- SSR/SSG<br/>- App Router<br/>- React 18]
+        StaticAssets[Static Assets<br/>- Images<br/>- CSS/JS<br/>- Fonts]
+        EdgeFunctions[Edge Functions<br/>- API Routes<br/>- Middleware<br/>- ISR]
+    end
+    
+    %% Backend Layer
+    subgraph "⚙️ Backend (Railway/Heroku)"
+        Express[Express.js API<br/>- REST Endpoints<br/>- TypeScript<br/>- Validation]
+        FileSystem[File System<br/>- JSON Data<br/>- Static Files<br/>- Logs]
+    end
+    
+    %% Database Layer (Future)
+    subgraph "💾 Database (Future)"
+        PostgreSQL[PostgreSQL<br/>- Product Data<br/>- User Data<br/>- Orders]
+        Redis[Redis Cache<br/>- Session Store<br/>- Query Cache<br/>- Rate Limiting]
+    end
+    
+    %% Monitoring & Analytics
+    subgraph "📊 Monitoring"
+        Analytics[Vercel Analytics<br/>- Performance<br/>- User Behavior<br/>- Core Web Vitals]
+        Logs[Centralized Logs<br/>- Error Tracking<br/>- Performance Monitoring<br/>- Alerts]
+        Monitoring[Health Checks<br/>- Uptime Monitoring<br/>- Response Time<br/>- Error Rates]
+    end
+    
+    %% External Services
+    subgraph "🔌 External Services"
+        PaymentGateway[Payment Gateway<br/>- Stripe/PayPal<br/>- Credit Cards<br/>- Digital Wallets]
+        EmailService[Email Service<br/>- Transactional Emails<br/>- Newsletter<br/>- Notifications]
+        ImageOptimization[Image Service<br/>- Cloudinary<br/>- Automatic Optimization<br/>- Transformations]
+    end
+    
+    %% Connections
+    Desktop --> CDN
+    Mobile --> CDN
+    Tablet --> CDN
+    
+    CDN --> LB
+    LB --> NextJS
+    LB --> Express
+    
+    NextJS --> StaticAssets
+    NextJS --> EdgeFunctions
+    EdgeFunctions --> Express
+    
+    Express --> FileSystem
+    Express --> PostgreSQL
+    Express --> Redis
+    
+    %% Monitoring connections
+    NextJS --> Analytics
+    Express --> Logs
+    Express --> Monitoring
+    
+    %% External services
+    Express --> PaymentGateway
+    Express --> EmailService
+    NextJS --> ImageOptimization
+    
+    %% Styling
+    classDef users fill:#e3f2fd,stroke:#1976d2,stroke-width:2px
+    classDef cdn fill:#fff3e0,stroke:#f57c00,stroke-width:2px
+    classDef frontend fill:#e8f5e8,stroke:#388e3c,stroke-width:2px
+    classDef backend fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef database fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef monitoring fill:#e0f2f1,stroke:#00695c,stroke-width:2px
+    classDef external fill:#fff8e1,stroke:#f9a825,stroke-width:2px
+    
+    class Desktop,Mobile,Tablet users
+    class CDN,LB cdn
+    class NextJS,StaticAssets,EdgeFunctions frontend
+    class Express,FileSystem backend
+    class PostgreSQL,Redis database
+    class Analytics,Logs,Monitoring monitoring
+    class PaymentGateway,EmailService,ImageOptimization external
+```
+
+### 🎯 Padrões de Arquitetura Implementados
+
+#### 1. **Layered Architecture (Arquitetura em Camadas)**
+- **Presentation Layer**: Componentes React, páginas Next.js
+- **API Layer**: Rotas Express, middleware, validação
+- **Business Logic**: Controllers, services, regras de negócio
+- **Data Access**: Acesso aos dados JSON, file system
+
+#### 2. **Clean Architecture Principles**
+- **Separation of Concerns**: Cada camada tem responsabilidade específica
+- **Dependency Inversion**: Camadas superiores não dependem de implementações
+- **Single Responsibility**: Cada módulo tem uma única responsabilidade
+
+#### 3. **Design Patterns Utilizados**
+- **Repository Pattern**: Abstração do acesso aos dados
+- **Service Layer Pattern**: Lógica de negócio centralizada
+- **Factory Pattern**: Criação de instâncias padronizada
+- **Observer Pattern**: Hooks React para mudanças de estado
+- **Strategy Pattern**: Diferentes estratégias de filtro e busca
 
 ## ⚡ Funcionalidades
 
@@ -258,8 +484,8 @@ graph LR
 
 ```bash
 # 1. Clone o repositório
-git clone https://github.com/seu-usuario/mercado-libre-clone.git
-cd mercado-libre-clone
+git clone https://github.com/glaucia86/mercado-livre-clone.git
+cd mercado-livre-clone
 
 # 2. Instale dependências do backend
 cd backend
@@ -303,7 +529,7 @@ npm test
 ## 📁 Estrutura do Projeto
 
 ```
-mercado-libre-clone/
+mercado-livre-clone/
 ├── 📁 backend/                  # Servidor Express.js
 │   ├── 📁 src/
 │   │   ├── 📁 controllers/      # Controladores HTTP
@@ -577,6 +803,6 @@ Este projeto está licenciado sob a [MIT License](LICENSE).
 
 Desenvolvido com ❤️ para demonstrar best practices em desenvolvimento full-stack.
 
-**[⬆ Voltar ao topo](#-mercadolibre-clone)**
+**[⬆ Voltar ao topo](#-mercado-livre-clone---glaucia-lemos)**
 
 </div>
