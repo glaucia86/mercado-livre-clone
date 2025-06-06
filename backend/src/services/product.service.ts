@@ -15,27 +15,50 @@ class ProductService {
   // PRIVATE METHOD: Data Loading
   // ==========================================================================
   private async loadData(): Promise<void> {
-    if (this.dataLoaded) return; // Avoid reloading if already done
+  if (this.dataLoaded) return
 
-    try {
-      // Path to JSON file
-      const dataPath = path.join(process.cwd(), 'src/data/products.json');
+  try {
+    // Multiple path attempts
+    const possiblePaths = [
+      path.join(import.meta.dirname, '../data/products.json'),
+      path.join(process.cwd(), 'src/data/products.json'),
+      path.resolve('src/data/products.json'),
+      './src/data/products.json'
+    ]
 
-      // Read the file as a string
-      const rawData = await fs.readFile(dataPath, 'utf-8');
+    let rawData: string | null = null
+    let usedPath: string | null = null
 
-      // Convert JSON to JavaScript object
-      const data = JSON.parse(rawData);
-
-      // Mark as loaded
-      this.dataLoaded = true;
-
-      console.log(`✅ Product data loaded successfully: ${this.products.length} items`);
-    } catch (error) {
-      console.error('❌ Error loading product data...: ', error);
-      throw new Error('Failed to load product data');
+    // Try each path until you find the file
+    for (const dataPath of possiblePaths) {
+      try {
+        console.log(`🔍 Trying to load: ${dataPath}`)
+        rawData = await fs.readFile(dataPath, 'utf-8')
+        usedPath = dataPath
+        break
+      } catch (err) {
+        console.log(`❌ NNot found in: ${dataPath}`)
+        continue
+      }
     }
+
+    if (!rawData) {
+      throw new Error('File products.json not found in any path')
+    }
+
+    console.log(`✅ File found in: ${usedPath}`)
+
+    const data = JSON.parse(rawData)
+    this.products = data.products
+    this.dataLoaded = true
+
+    console.log(`✅ Data loaded: ${this.products.length} products`)
+
+  } catch (error) {
+    console.error('❌ Error loading products:', error)
+    throw new Error('Failed to load products')
   }
+}
 
   // ==========================================================================
   //  PUBLIC METHOD: Search All Products with Filters
