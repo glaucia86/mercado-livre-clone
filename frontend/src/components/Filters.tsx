@@ -87,15 +87,20 @@ export default function Filters({
 
   // Atualizar filtros
   const updateFilter = (key: keyof ProductFilters, value: any) => {
+    console.log(`🔧 Atualizando filtro ${key}:`, value)
+    
     const newFilters = { ...filters, [key]: value }
     
     // Remover campos vazios/undefined
     Object.keys(newFilters).forEach(k => {
       const val = newFilters[k as keyof ProductFilters]
       if (val === '' || val === undefined || val === null) {
+        console.log(`🗑️ Removendo filtro ${k}:`, val)
         delete newFilters[k as keyof ProductFilters]
       }
     })
+    
+    console.log('📦 Novos filtros:', newFilters)
     
     // Se estamos limpando preços, limpar também os estados locais
     if (key === 'minPrice' && (value === undefined || value === null)) {
@@ -235,7 +240,7 @@ export default function Filters({
                   type="radio"
                   name="category"
                   checked={!filters.category}
-                  onChange={() => updateFilter('category', '')}
+                  onChange={() => updateFilter('category', undefined)} // Remove completamente
                   className="text-blue-600 focus:ring-blue-500"
                   disabled={isLoading}
                 />

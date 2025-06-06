@@ -65,13 +65,16 @@ export default function HomePage() {
     try {
       setLoadingState({ isLoading: true, error: null })
       
-      console.log('🔍 Carregando produtos:', { currentFilters, currentPage })
+      console.log('🔍 Carregando produtos com filtros:', currentFilters)
+      console.log('🔍 Página:', currentPage)
 
       const response: PaginatedResponse<Product> = await api.getProducts({
         ...currentFilters,
         page: currentPage,
         limit: pagination.limit
       })
+
+      console.log('📦 Resposta da API:', response)
 
       // Se é uma nova busca (página 1), substitui a lista
       // Se é paginação, adiciona à lista existente
@@ -119,8 +122,9 @@ export default function HomePage() {
       return value !== undefined && value !== null && value !== ''
     })
 
-    console.log('🔄 Filtros mudaram:', filters)
+    console.log('🔄 Filtros mudaram na página:', filters)
     console.log('🔄 Tem filtros ativos:', hasActiveFilters)
+    console.log('🔄 Filtros que serão enviados para API:', filters)
     
     // Sempre recarregar produtos (com ou sem filtros)
     loadProducts(filters, 1, true)
@@ -145,7 +149,7 @@ export default function HomePage() {
   }
 
   const handleFiltersChange = (newFilters: ProductFilters) => {
-    console.log('🔧 Filtros alterados:', newFilters)
+    console.log('🔧 Filtros alterados na página:', newFilters)
     
     // Para filtros que não são busca, aplicar imediatamente
     const { search, ...otherFilters } = newFilters

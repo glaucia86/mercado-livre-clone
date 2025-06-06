@@ -50,17 +50,24 @@ class ApiService {
     limit?: number
   } = {}): Promise<PaginatedResponse<Product>> {
     
+    console.log('🌐 API getProducts chamada com params:', params)
+    
     // Criar query string
     const searchParams = new URLSearchParams()
     
     Object.entries(params).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== '') {
+        console.log(`📎 Adicionando param ${key}:`, value)
         searchParams.append(key, value.toString())
+      } else {
+        console.log(`⏭️ Ignorando param ${key}:`, value)
       }
     })
     
     const query = searchParams.toString()
     const endpoint = `/products${query ? `?${query}` : ''}`
+    
+    console.log('🔗 URL final:', `${API_BASE}${endpoint}`)
     
     return this.request<PaginatedResponse<Product>>(endpoint)
   }
