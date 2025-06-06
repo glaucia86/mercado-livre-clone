@@ -352,9 +352,9 @@ graph TD
 
 | Tecnologia | Versão | Propósito |
 |------------|--------|-----------|
-| **Next.js** | 14.0.0 | Framework React com SSR/SSG |
+| **Next.js** | 15^.0.0 | Framework React com SSR/SSG |
 | **React** | 18.2.0 | Biblioteca de interface |
-| **TypeScript** | 5.0.0 | Type safety e DX |
+| **TypeScript** | 5^.0.0 | Type safety e DX |
 | **TailwindCSS** | 3.3.0 | Styling utility-first |
 | **Lucide React** | Latest | Ícones SVG otimizados |
 
