@@ -9,13 +9,15 @@ import { api } from '@/services/api.service'
 interface FiltersProps {
   filters: ProductFilters
   onFiltersChange: (filters: ProductFilters) => void
+  onSearchChange?: (searchTerm: string) => void // Nova prop para busca
   resultsCount?: number
   isLoading?: boolean
 }
 
 export default function Filters({ 
   filters, 
-  onFiltersChange, 
+  onFiltersChange,
+  onSearchChange,
   resultsCount = 0,
   isLoading = false 
 }: FiltersProps) {
@@ -57,6 +59,9 @@ export default function Filters({
 
   // Limpar todos os filtros
   const clearAllFilters = () => {
+    if (onSearchChange) {
+      onSearchChange('')
+    }
     onFiltersChange({})
   }
 
@@ -69,6 +74,7 @@ export default function Filters({
   return (
     <div className="space-y-6">
       {/* ================================================================
+          HEADER DOS FILTROS
           ================================================================ */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-2">
@@ -119,14 +125,29 @@ export default function Filters({
             <input
               type="text"
               value={filters.search || ''}
-              onChange={(e) => updateFilter('search', e.target.value)}
+              onChange={(e) => {
+                const newSearchValue = e.target.value
+                // Se temos onSearchChange, usar ela (com debounce no pai)
+                if (onSearchChange) {
+                  onSearchChange(newSearchValue)
+                } else {
+                  // Fallback para o método antigo
+                  updateFilter('search', newSearchValue)
+                }
+              }}
               placeholder="Digite o que você procura..."
               className="search-input"
               disabled={isLoading}
             />
             {filters.search && (
               <button
-                onClick={() => updateFilter('search', '')}
+                onClick={() => {
+                  if (onSearchChange) {
+                    onSearchChange('')
+                  } else {
+                    updateFilter('search', '')
+                  }
+                }}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 aria-label="Limpar busca"
               >
@@ -314,7 +335,13 @@ export default function Filters({
           {filters.search && (
             <FilterTag
               label={`Busca: "${filters.search}"`}
-              onRemove={() => updateFilter('search', '')}
+              onRemove={() => {
+                if (onSearchChange) {
+                  onSearchChange('')
+                } else {
+                  updateFilter('search', '')
+                }
+              }}
             />
           )}
           {filters.category && (

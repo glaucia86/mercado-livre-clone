@@ -5,6 +5,7 @@ import { Product, PaginatedResponse, ProductFilters, LoadingState } from '@/type
 import { api } from '@/services/api.service'
 import ProductCard, { ProductCardSkeleton } from '@/components/ProductCard'
 import Filters from '@/components/Filters'
+import { useSearchDebounce } from '@/hooks/useDebounce'
 
 // ============================================================================
 // HOME PAGE COMPONENT - Página principal com lista de produtos
@@ -19,12 +20,38 @@ export default function HomePage() {
     total: 0,
     totalPages: 0
   })
+  
+  // Separar estado local de busca dos filtros para evitar re-renders
+  const [searchTerm, setSearchTerm] = useState<string>('')
   const [filters, setFilters] = useState<ProductFilters>({})
+  
   const [loadingState, setLoadingState] = useState<LoadingState>({
     isLoading: true,
     error: null
   })
   const [sortBy, setSortBy] = useState<string>('relevance')
+
+  // Aplicar debounce na busca (800ms)
+  const debouncedSearchTerm = useSearchDebounce(searchTerm, 800)
+
+  // ============================================================================
+  // EFFECTS PARA SINCRONIZAR BUSCA COM FILTROS
+  // ============================================================================
+
+  // Atualizar filtros quando o termo de busca com debounce mudar
+  useEffect(() => {
+    setFilters(prevFilters => ({
+      ...prevFilters,
+      search: debouncedSearchTerm || undefined
+    }))
+  }, [debouncedSearchTerm])
+
+  // Sincronizar searchTerm com filtros quando filters.search mudar externamente
+  useEffect(() => {
+    if (filters.search !== searchTerm) {
+      setSearchTerm(filters.search || '')
+    }
+  }, [filters.search])
 
   // ============================================================================
   // FUNÇÃO PARA CARREGAR PRODUTOS
@@ -84,12 +111,19 @@ export default function HomePage() {
     loadProducts({}, 1, true)
   }, [])
 
-  // Carregar produtos quando filtros mudam
+  // Carregar produtos quando filtros mudam (mas não a cada tecla da busca)
   useEffect(() => {
-    if (Object.keys(filters).length > 0 || filters.search !== undefined) {
+    // Só recarrega se há filtros aplicados ou se a busca foi limpa
+    const hasActiveFilters = Object.keys(filters).some(key => {
+      const value = filters[key as keyof ProductFilters]
+      return value !== undefined && value !== null && value !== ''
+    })
+
+    if (hasActiveFilters) {
+      console.log('🔄 Recarregando produtos com filtros:', filters)
       loadProducts(filters, 1, true)
     }
-  }, [filters])
+  }, [filters]) // Agora só depende de filters, não de searchTerm
 
   // ============================================================================
   // HANDLERS
@@ -97,7 +131,21 @@ export default function HomePage() {
 
   const handleFiltersChange = (newFilters: ProductFilters) => {
     console.log('🔧 Filtros alterados:', newFilters)
-    setFilters(newFilters)
+    
+    // Se a busca mudou, atualizar o estado local imediatamente (sem debounce)
+    // Isso permite que o usuário veja o que está digitando
+    if (newFilters.search !== undefined && newFilters.search !== searchTerm) {
+      setSearchTerm(newFilters.search)
+    }
+    
+    // Para outros filtros (categoria, preço, etc.), aplicar imediatamente
+    const { search, ...otherFilters } = newFilters
+    setFilters(prevFilters => ({
+      ...prevFilters,
+      ...otherFilters,
+      // Manter a busca atual do estado local, não da prop
+      search: prevFilters.search
+    }))
   }
 
   const handleLoadMore = () => {
@@ -151,7 +199,7 @@ export default function HomePage() {
           <aside className="lg:w-80 flex-shrink-0">
             <div className="sticky top-24">
               <Filters
-                filters={filters}
+                filters={{ ...filters, search: searchTerm }} // Passar searchTerm atual
                 onFiltersChange={handleFiltersChange}
                 resultsCount={pagination.total}
                 isLoading={loadingState.isLoading}
