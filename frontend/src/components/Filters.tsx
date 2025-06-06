@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { ProductFilters } from '@/types'
 import { api } from '@/services/api.service'
+import { useDebounce } from '@/hooks/useDebounce'
 
 // ============================================================================
 // FILTERS COMPONENT - Componente de filtros para produtos
@@ -25,6 +26,14 @@ export default function Filters({
   const [categoriesLoading, setCategoriesLoading] = useState(true)
   const [isExpanded, setIsExpanded] = useState(false)
 
+  // Estados locais para preços (evitar perda de foco)
+  const [localMinPrice, setLocalMinPrice] = useState<string>('')
+  const [localMaxPrice, setLocalMaxPrice] = useState<string>('')
+
+  // Aplicar debounce nos preços (1 segundo para dar tempo de digitar)
+  const debouncedMinPrice = useDebounce(localMinPrice, 1000)
+  const debouncedMaxPrice = useDebounce(localMaxPrice, 1000)
+
   // Carregar categorias ao montar o componente
   useEffect(() => {
     async function loadCategories() {
@@ -42,6 +51,40 @@ export default function Filters({
     loadCategories()
   }, [])
 
+  // Sincronizar preços locais com filtros quando filters mudam externamente
+  useEffect(() => {
+    setLocalMinPrice(filters.minPrice?.toString() || '')
+    setLocalMaxPrice(filters.maxPrice?.toString() || '')
+  }, [filters.minPrice, filters.maxPrice])
+
+  // Atualizar filtros quando preços com debounce mudarem
+  useEffect(() => {
+    const minPrice = debouncedMinPrice ? Number(debouncedMinPrice) : undefined
+    const maxPrice = debouncedMaxPrice ? Number(debouncedMaxPrice) : undefined
+    
+    // Só atualizar se realmente mudou
+    if (filters.minPrice !== minPrice || filters.maxPrice !== maxPrice) {
+      console.log('💰 Atualizando preços com debounce:', { minPrice, maxPrice })
+      
+      // Atualizar filtros diretamente sem passar por updateFilter para evitar loop
+      const newFilters = { ...filters }
+      
+      if (minPrice !== undefined) {
+        newFilters.minPrice = minPrice
+      } else {
+        delete newFilters.minPrice
+      }
+      
+      if (maxPrice !== undefined) {
+        newFilters.maxPrice = maxPrice
+      } else {
+        delete newFilters.maxPrice
+      }
+      
+      onFiltersChange(newFilters)
+    }
+  }, [debouncedMinPrice, debouncedMaxPrice])
+
   // Atualizar filtros
   const updateFilter = (key: keyof ProductFilters, value: any) => {
     const newFilters = { ...filters, [key]: value }
@@ -54,6 +97,14 @@ export default function Filters({
       }
     })
     
+    // Se estamos limpando preços, limpar também os estados locais
+    if (key === 'minPrice' && (value === undefined || value === null)) {
+      setLocalMinPrice('')
+    }
+    if (key === 'maxPrice' && (value === undefined || value === null)) {
+      setLocalMaxPrice('')
+    }
+    
     onFiltersChange(newFilters)
   }
 
@@ -63,6 +114,9 @@ export default function Filters({
     if (onSearchChange) {
       onSearchChange('')
     }
+    // Limpar preços locais
+    setLocalMinPrice('')
+    setLocalMaxPrice('')
     // Limpar todos os filtros
     onFiltersChange({})
   }
@@ -228,8 +282,8 @@ export default function Filters({
                 </span>
                 <input
                   type="number"
-                  value={filters.minPrice || ''}
-                  onChange={(e) => updateFilter('minPrice', e.target.value ? Number(e.target.value) : undefined)}
+                  value={localMinPrice}
+                  onChange={(e) => setLocalMinPrice(e.target.value)}
                   placeholder="0"
                   min="0"
                   step="0.01"
@@ -250,8 +304,8 @@ export default function Filters({
                 </span>
                 <input
                   type="number"
-                  value={filters.maxPrice || ''}
-                  onChange={(e) => updateFilter('maxPrice', e.target.value ? Number(e.target.value) : undefined)}
+                  value={localMaxPrice}
+                  onChange={(e) => setLocalMaxPrice(e.target.value)}
                   placeholder="999999"
                   min="0"
                   step="0.01"
@@ -274,6 +328,10 @@ export default function Filters({
                 <button
                   key={range.label}
                   onClick={() => {
+                    // Atualizar estados locais imediatamente (sem esperar debounce)
+                    setLocalMinPrice(range.min?.toString() || '')
+                    setLocalMaxPrice(range.max?.toString() || '')
+                    // Atualizar filtros imediatamente para faixas pré-definidas
                     updateFilter('minPrice', range.min)
                     updateFilter('maxPrice', range.max)
                   }}
@@ -355,13 +413,19 @@ export default function Filters({
           {filters.minPrice && (
             <FilterTag
               label={`Min: R$ ${filters.minPrice}`}
-              onRemove={() => updateFilter('minPrice', undefined)}
+              onRemove={() => {
+                setLocalMinPrice('')
+                updateFilter('minPrice', undefined)
+              }}
             />
           )}
           {filters.maxPrice && (
             <FilterTag
               label={`Max: R$ ${filters.maxPrice}`}
-              onRemove={() => updateFilter('maxPrice', undefined)}
+              onRemove={() => {
+                setLocalMaxPrice('')
+                updateFilter('maxPrice', undefined)
+              }}
             />
           )}
           {filters.freeShipping && (
