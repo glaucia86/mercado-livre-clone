@@ -9,7 +9,7 @@
 ### 1. Clone o repositório
 ```bash
 git clone <repository-url>
-cd mercado-libre-simple
+cd mercado-livre-clone
 ```
 
 ### 2. Executar Backend
@@ -105,7 +105,7 @@ Verifique se o backend está rodando na porta 3001 antes de iniciar o frontend.
 ## 📊 Estrutura do Projeto
 
 ```
-mercado-libre-simple/
+mercado-livre-clone/
 ├── backend/          # API Express + TypeScript
 │   ├── src/
 │   │   ├── controllers/
