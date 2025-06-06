@@ -111,41 +111,59 @@ export default function HomePage() {
     loadProducts({}, 1, true)
   }, [])
 
-  // Carregar produtos quando filtros mudam (mas não a cada tecla da busca)
+  // Carregar produtos quando filtros mudam (incluindo quando ficam vazios)
   useEffect(() => {
-    // Só recarrega se há filtros aplicados ou se a busca foi limpa
+    // Verificar se há filtros ativos
     const hasActiveFilters = Object.keys(filters).some(key => {
       const value = filters[key as keyof ProductFilters]
       return value !== undefined && value !== null && value !== ''
     })
 
-    if (hasActiveFilters) {
-      console.log('🔄 Recarregando produtos com filtros:', filters)
-      loadProducts(filters, 1, true)
-    }
-  }, [filters]) // Agora só depende de filters, não de searchTerm
+    console.log('🔄 Filtros mudaram:', filters)
+    console.log('🔄 Tem filtros ativos:', hasActiveFilters)
+    
+    // Sempre recarregar produtos (com ou sem filtros)
+    loadProducts(filters, 1, true)
+    
+  }, [filters]) // Agora sempre recarrega quando filters muda
 
   // ============================================================================
   // HANDLERS
   // ============================================================================
 
+  const handleSearchChange = (newSearchTerm: string) => {
+    console.log('🔍 Busca alterada:', newSearchTerm)
+    setSearchTerm(newSearchTerm)
+    
+    // Se estamos limpando a busca, remover dos filtros imediatamente
+    if (newSearchTerm === '') {
+      setFilters(prevFilters => {
+        const { search, ...rest } = prevFilters
+        return rest
+      })
+    }
+  }
+
   const handleFiltersChange = (newFilters: ProductFilters) => {
     console.log('🔧 Filtros alterados:', newFilters)
     
-    // Se a busca mudou, atualizar o estado local imediatamente (sem debounce)
-    // Isso permite que o usuário veja o que está digitando
-    if (newFilters.search !== undefined && newFilters.search !== searchTerm) {
-      setSearchTerm(newFilters.search)
-    }
-    
-    // Para outros filtros (categoria, preço, etc.), aplicar imediatamente
+    // Para filtros que não são busca, aplicar imediatamente
     const { search, ...otherFilters } = newFilters
     setFilters(prevFilters => ({
       ...prevFilters,
-      ...otherFilters,
-      // Manter a busca atual do estado local, não da prop
-      search: prevFilters.search
+      ...otherFilters
     }))
+    
+    // Se search foi alterado explicitamente (para limpar), aplicar
+    if (newFilters.hasOwnProperty('search')) {
+      setSearchTerm(newFilters.search || '')
+      if (!newFilters.search) {
+        setFilters(prevFilters => {
+          const { search, ...rest } = prevFilters
+          return rest
+        })
+      }
+    }
   }
 
   const handleLoadMore = () => {
@@ -201,6 +219,7 @@ export default function HomePage() {
               <Filters
                 filters={{ ...filters, search: searchTerm }} // Passar searchTerm atual
                 onFiltersChange={handleFiltersChange}
+                onSearchChange={handleSearchChange} // Handler específico para busca
                 resultsCount={pagination.total}
                 isLoading={loadingState.isLoading}
               />
@@ -342,7 +361,10 @@ export default function HomePage() {
                         Tente ajustar os filtros ou buscar por outros termos.
                       </p>
                       <button
-                        onClick={() => handleFiltersChange({})}
+                        onClick={() => {
+                          setSearchTerm('')
+                          setFilters({})
+                        }}
                         className="btn-secondary"
                       >
                         Limpar filtros
@@ -375,7 +397,10 @@ export default function HomePage() {
             ].map((cat) => (
               <button
                 key={cat.category}
-                onClick={() => handleFiltersChange({ category: cat.category })}
+                onClick={() => {
+                  setSearchTerm('')
+                  setFilters({ category: cat.category })
+                }}
                 className="flex flex-col items-center p-6 bg-gray-50 rounded-lg hover:bg-blue-50 hover:shadow-md transition-all duration-200 group"
               >
                 <span className="text-3xl mb-2">{cat.icon}</span>

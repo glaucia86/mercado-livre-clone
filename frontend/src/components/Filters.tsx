@@ -59,9 +59,11 @@ export default function Filters({
 
   // Limpar todos os filtros
   const clearAllFilters = () => {
+    // Limpar busca se temos a função
     if (onSearchChange) {
       onSearchChange('')
     }
+    // Limpar todos os filtros
     onFiltersChange({})
   }
 
@@ -142,11 +144,11 @@ export default function Filters({
             {filters.search && (
               <button
                 onClick={() => {
+                  // Limpar busca - atualizar ambos os estados
                   if (onSearchChange) {
-                    onSearchChange('')
-                  } else {
-                    updateFilter('search', '')
+                    onSearchChange('') // Limpa o estado local
                   }
+                  updateFilter('search', '') // Limpa dos filtros
                 }}
                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
                 aria-label="Limpar busca"
@@ -336,11 +338,11 @@ export default function Filters({
             <FilterTag
               label={`Busca: "${filters.search}"`}
               onRemove={() => {
+                // Limpar busca - atualizar ambos os estados
                 if (onSearchChange) {
-                  onSearchChange('')
-                } else {
-                  updateFilter('search', '')
+                  onSearchChange('') // Limpa o estado local
                 }
+                updateFilter('search', '') // Limpa dos filtros
               }}
             />
           )}
