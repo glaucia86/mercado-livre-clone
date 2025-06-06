@@ -1,6 +1,6 @@
 import express from 'express'
 import cors from 'cors'
-import productRoutes from './routes/products.routes'
+import productsRoutes from './routes/products.routes'
 import { errorHandler, notFound, requestLogger } from './middleware/error.js'
 
 // ============================================================================
@@ -63,7 +63,7 @@ app.get('/api', (req, res) => {
 })
 
 // Product routes
-app.use('/api/products', productRoutes)
+app.use('/api/products', productsRoutes)
 
 // ============================================================================
 // ERROR HANDLING (sempre por último)
