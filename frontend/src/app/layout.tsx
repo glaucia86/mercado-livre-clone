@@ -6,23 +6,23 @@ import './globals.css'
 // ============================================================================
 
 export const metadata: Metadata = {
-  title: 'MercadoLibre Clone - Marketplace Online',
+  title: 'Mercado Livre Clone - Marketplace Online',
   description: 'Encontre milhares de produtos com os melhores preços. Smartphones, notebooks, games e muito mais com frete grátis.',
   keywords: 'marketplace, e-commerce, produtos, compras online, smartphones, notebooks, games',
-  authors: [{ name: 'MercadoLibre Clone Team' }],
-  creator: 'MercadoLibre Clone',
-  publisher: 'MercadoLibre Clone',
+  authors: [{ name: 'Mercado Livre Clone Team' }],
+  creator: 'Mercado Livre Clone',
+  publisher: 'Mercado Livre Clone',
   robots: 'index, follow',
   openGraph: {
-    title: 'MercadoLibre Clone - Marketplace Online',
+    title: 'Mercado Livre Clone - Marketplace Online',
     description: 'Encontre milhares de produtos com os melhores preços',
     type: 'website',
     locale: 'pt_BR',
-    siteName: 'MercadoLibre Clone'
+    siteName: 'Mercado Livre Clone'
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'MercadoLibre Clone - Marketplace Online',
+    title: 'Mercado Livre Clone - Marketplace Online',
     description: 'Encontre milhares de produtos com os melhores preços'
   },
   viewport: {
@@ -120,7 +120,7 @@ function Header() {
                 <span className="text-white font-bold text-sm">ML</span>
               </div>
               <span className="hidden sm:block font-bold text-gray-800 text-lg">
-                MercadoLibre
+                Mercado Livre
               </span>
             </a>
           </div>
@@ -246,7 +246,7 @@ function Footer() {
         {/* Copyright */}
         <div className="border-t border-gray-700 mt-8 pt-8 text-center">
           <p className="text-sm">
-            © 2025 MercadoLibre Clone. Todos os direitos reservados. | 
+            © 2025 Mercado Livre Clone. Todos os direitos reservados. | 
             <a href="#" className="ml-1 hover:text-white transition-colors duration-200">Política de Privacidade</a> | 
             <a href="#" className="ml-1 hover:text-white transition-colors duration-200">Termos de Uso</a>
           </p>
