@@ -1,0 +1,38 @@
+{
+  "name": "backend",
+  "desciption": "A backend application replicating the Mercado Livre API - a simple version",
+  "type": "module",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "tsx watch src/app.ts",
+    "build": "tsc",
+    "start": "node dist/app.js",
+    "test": "vitest"
+  },
+  "keywords": [
+    "backend",
+    "mercado-livre",
+    "api",
+    "express",
+    "cors",
+    "zod",
+    "typescript",
+    "vitest",
+    "node"
+  ],
+  "author": "Glaucia Lemos <GitHub: glaucia86>",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^5.1.0",
+    "zod": "^3.25.53"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.18",
+    "@types/express": "^5.0.2",
+    "@types/node": "^22.15.30",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3",
+    "vitest": "^3.2.2"
+  }
+}
