@@ -81,7 +81,7 @@ app.use(errorHandler)
 
 const server = app.listen(PORT, () => {
   console.log('\n🚀 ================================')
-  console.log('   MERCADOLIBRE CLONE API')
+  console.log('   MERCADO LIBRE CLONE API')
   console.log('================================')
   console.log(`🌐 Server: http://localhost:${PORT}`)
   console.log(`📚 API: http://localhost:${PORT}/api`)
