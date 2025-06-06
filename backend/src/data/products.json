@@ -1,0 +1,130 @@
+{
+  "products": [
+    {
+      "id": "ML-001",
+      "title": "Samsung Galaxy S24 Ultra 256GB",
+      "description": "Smartphone premium com câmera de 200MP, S Pen incluída, tela Dynamic AMOLED 2X de 6.8 polegadas, processador Snapdragon 8 Gen 3 otimizado para Galaxy. Ideal para fotografia profissional e produtividade.",
+      "price": 6999.99,
+      "currency": "BRL",
+      "image": "https://http2.mlstatic.com/D_NQ_NP_2X_706152-MLA74088396736_012024-F.webp",
+      "category": "smartphones",
+      "seller": {
+        "id": "SELLER-001",
+        "name": "Tech Premium",
+        "reputation": 98,
+        "location": "São Paulo, SP"
+      },
+      "rating": 4.8,
+      "reviews": 2847,
+      "shipping": {
+        "free": true
+      },
+      "stock": 47
+    },
+    {
+      "id": "ML-002", 
+      "title": "MacBook Air M2 13\" 8GB 256GB",
+      "description": "Notebook Apple com chip M2, design ultrafino e leve, tela Liquid Retina de 13.6 polegadas, até 18 horas de bateria. Perfeito para trabalho, estudos e criatividade.",
+      "price": 12999.90,
+      "currency": "BRL",
+      "image": "https://http2.mlstatic.com/D_NQ_NP_2X_637313-MLA51356401031_082022-F.webp",
+      "category": "notebooks",
+      "seller": {
+        "id": "SELLER-002",
+        "name": "Apple Store Oficial",
+        "reputation": 99,
+        "location": "São Paulo, SP"
+      },
+      "rating": 4.9,
+      "reviews": 8945,
+      "shipping": {
+        "free": true
+      },
+      "stock": 23
+    },
+    {
+      "id": "ML-003",
+      "title": "PlayStation 5 Digital Edition",
+      "description": "Console de última geração com SSD ultrarrápido, gráficos 4K até 120fps, áudio 3D Tempest, controle DualSense com feedback tátil. Inclui jogos digitais compatíveis.",
+      "price": 3899.99,
+      "currency": "BRL", 
+      "image": "https://http2.mlstatic.com/D_NQ_NP_2X_797125-MLA82522963662_032025-F.webp",
+      "category": "games",
+      "seller": {
+        "id": "SELLER-003",
+        "name": "GameStore Premium",
+        "reputation": 96,
+        "location": "São Paulo, SP"
+      },
+      "rating": 4.8,
+      "reviews": 5632,
+      "shipping": {
+        "free": true
+      },
+      "stock": 8
+    },
+    {
+      "id": "ML-004",
+      "title": "iPhone 15 Pro 128GB",
+      "description": "iPhone com chip A17 Pro, câmera de 48MP com zoom óptico 3x, tela Super Retina XDR de 6.1 polegadas, construção em titânio. O mais avançado iPhone já criado.",
+      "price": 8999.99,
+      "currency": "BRL",
+      "image": "https://http2.mlstatic.com/D_NQ_NP_2X_924325-MLA70632427984_072023-F.webp",
+      "category": "smartphones",
+      "seller": {
+        "id": "SELLER-002",
+        "name": "Apple Store Oficial", 
+        "reputation": 99,
+        "location": "São Paulo, SP"
+      },
+      "rating": 4.9,
+      "reviews": 1256,
+      "shipping": {
+        "free": true
+      },
+      "stock": 15
+    },
+    {
+      "id": "ML-005",
+      "title": "Dell XPS 13 Intel i7 16GB 512GB",
+      "description": "Notebook ultrabook premium com processador Intel Core i7 de 12ª geração, 16GB RAM, SSD 512GB, tela InfinityEdge 13.4 polegadas. Design elegante e performance excepcional.",
+      "price": 7899.99,
+      "currency": "BRL",
+      "image": "https://http2.mlstatic.com/D_NQ_NP_2X_985851-MLA46516512994_062021-F.webp",
+      "category": "notebooks",
+      "seller": {
+        "id": "SELLER-004",
+        "name": "Dell Store Oficial",
+        "reputation": 97,
+        "location": "Rio de Janeiro, RJ"
+      },
+      "rating": 4.7,
+      "reviews": 892,
+      "shipping": {
+        "free": true
+      },
+      "stock": 31
+    },
+    {
+      "id": "ML-006",
+      "title": "Nintendo Switch OLED",
+      "description": "Console portátil com tela OLED de 7 polegadas, cores vibrantes, áudio aprimorado, 64GB de armazenamento interno. Inclui dock para TV e controles Joy-Con.",
+      "price": 2499.99,
+      "currency": "BRL",
+      "image": "https://http2.mlstatic.com/D_NQ_NP_2X_647323-MLA47920657514_102021-F.webp",
+      "category": "games",
+      "seller": {
+        "id": "SELLER-003",
+        "name": "GameStore Premium",
+        "reputation": 96,
+        "location": "São Paulo, SP"
+      },
+      "rating": 4.6,
+      "reviews": 3421,
+      "shipping": {
+        "free": true
+      },
+      "stock": 52
+    }
+  ]
+}
