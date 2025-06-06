@@ -69,7 +69,7 @@
       "description": "iPhone com chip A17 Pro, câmera de 48MP com zoom óptico 3x, tela Super Retina XDR de 6.1 polegadas, construção em titânio. O mais avançado iPhone já criado.",
       "price": 8999.99,
       "currency": "BRL",
-      "image": "https://http2.mlstatic.com/D_NQ_NP_2X_924325-MLA70632427984_072023-F.webp",
+      "image": "https://http2.mlstatic.com/D_NQ_NP_2X_878826-MLA71783168396_092023-F.webp",
       "category": "smartphones",
       "seller": {
         "id": "SELLER-002",
@@ -90,7 +90,7 @@
       "description": "Notebook ultrabook premium com processador Intel Core i7 de 12ª geração, 16GB RAM, SSD 512GB, tela InfinityEdge 13.4 polegadas. Design elegante e performance excepcional.",
       "price": 7899.99,
       "currency": "BRL",
-      "image": "https://http2.mlstatic.com/D_NQ_NP_2X_985851-MLA46516512994_062021-F.webp",
+      "image": "https://http2.mlstatic.com/D_NQ_NP_2X_691410-MLA82191784534_022025-F-xps-13-9340-core-ultra-7-16gb-1tb-ssd-windows-11-home.webp",
       "category": "notebooks",
       "seller": {
         "id": "SELLER-004",
@@ -111,7 +111,7 @@
       "description": "Console portátil com tela OLED de 7 polegadas, cores vibrantes, áudio aprimorado, 64GB de armazenamento interno. Inclui dock para TV e controles Joy-Con.",
       "price": 2499.99,
       "currency": "BRL",
-      "image": "https://http2.mlstatic.com/D_NQ_NP_2X_647323-MLA47920657514_102021-F.webp",
+      "image": "https://http2.mlstatic.com/D_NQ_NP_2X_696409-MLU78805273511_082024-F.webp",
       "category": "games",
       "seller": {
         "id": "SELLER-003",
@@ -125,6 +125,48 @@
         "free": true
       },
       "stock": 52
+    },
+    {
+      "id": "ML-007",
+      "title": "Apple iPad 10 Geração 2022 64gb Azul 8gb RAM 10.9\"",
+      "description": "iPad com chip A14 Bionic, tela Liquid Retina de 10.9 polegadas, 64GB de armazenamento, design leve e portátil. Ideal para entretenimento, estudos e trabalho.",
+      "price": 3999.99,
+      "currency": "BRL",
+      "image": "https://http2.mlstatic.com/D_NQ_NP_2X_764857-MLA52988770506_122022-F.webp",
+      "category": "tablets",
+      "seller": {
+        "id": "SELLER-001",
+        "name": "Tech Premium",
+        "reputation": 98,
+        "location": "São Paulo, SP"
+      },
+      "rating": 4.8,
+      "reviews": 1456,
+      "shipping": {
+        "free": true
+      },
+      "stock": 20
+    },
+    {
+      "id": "ML-008",
+      "title": "Smart TV LED 43 Ultra HD 4K LG 43UR781C0SA.BWZ Preto ThinQ AI 3 HDMI 2 USB Wi-Fi Bluetooth HDR10",
+      "description": "Smart TV LED 43 polegadas com resolução Ultra HD 4K, tecnologia ThinQ AI, 3 entradas HDMI, 2 USB, Wi-Fi e Bluetooth. Ideal para sua sala de estar.",
+      "price": 1600.00,
+      "currency": "BRL",
+      "image": "https://http2.mlstatic.com/D_NQ_NP_2X_878606-MLA83156384498_032025-F.webp",
+      "category": "SmartTVs",
+      "seller": {
+        "id": "SELLER-001",
+        "name": "Tech Premium",
+        "reputation": 98,
+        "location": "São Paulo, SP"
+      },
+      "rating": 4.8,
+      "reviews": 1456,
+      "shipping": {
+        "free": true
+      },
+      "stock": 20
     }
   ]
 }
