@@ -1,6 +1,189 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+@theme {
+  --color-mercado-yellow: #ffe600;
+  --color-mercado-blue: #3483fa;
+  --color-mercado-green: #00a650;
+  --color-mercado-orange: #ff6900;
+  --color-mercado-red: #f23c4d;
+
+  --color-mercado-gray-100: #f5f5f5;
+  --color-mercado-gray-200: #ebebeb;
+  --color-mercado-gray-300: #d9d9d9;
+  --color-mercado-gray-400: #999999;
+  --color-mercado-gray-500: #666666;
+  --color-mercado-gray-600: #333333;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+}
+
+@utility container-ml {
+  /* ========================================================================
+     COMPONENTES CUSTOMIZADOS
+     ======================================================================== */
+
+  /* Container responsivo padrão */
+  @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
+}
+
+@utility product-card {
+  /* Card base para produtos */
+  @apply bg-white rounded-lg shadow-xs border border-gray-200 hover:shadow-md transition-shadow duration-200;
+}
+
+@utility btn-primary {
+  /* Botão principal (MercadoLibre style) */
+  @apply bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+@utility btn-secondary {
+  /* Botão secundário */
+  @apply bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-md transition-colors duration-200;
+}
+
+@utility price-highlight {
+  /* Preço destacado */
+  @apply text-2xl font-bold text-gray-900;
+}
+
+@utility price-original {
+  /* Preço original (com desconto) */
+  @apply text-sm text-gray-500 line-through;
+}
+
+@utility free-shipping-badge {
+  /* Badge de frete grátis */
+  @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800;
+}
+
+@utility rating-stars {
+  /* Rating com estrelas */
+  @apply flex items-center space-x-1 text-yellow-400;
+}
+
+@utility search-input {
+  /* Input de busca */
+  @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-hidden transition-all duration-200;
+}
+
+@utility loading-spinner {
+  /* Loading spinner */
+  @apply animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500;
+}
+
+@utility skeleton {
+  /* Skeleton loading */
+  @apply animate-pulse bg-gray-200 rounded-sm;
+}
+
+@utility products-grid {
+  /* Grid responsivo de produtos */
+  @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6;
+}
+
+@utility filters-sidebar {
+  /* Filtros sidebar */
+  @apply space-y-6 p-4 bg-white rounded-lg shadow-xs border border-gray-200;
+}
+
+@utility breadcrumb {
+  /* Breadcrumb navigation */
+  @apply flex items-center space-x-2 text-sm text-gray-600;
+}
+
+@utility breadcrumb-item {
+  @apply hover:text-blue-600 transition-colors duration-200;
+}
+
+@utility breadcrumb-separator {
+  @apply text-gray-400;
+}
+
+@utility line-clamp-2 {
+  /* ========================================================================
+     UTILITÁRIOS CUSTOMIZADOS
+     ======================================================================== */
+
+  /* Truncate com múltiplas linhas */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@utility line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@utility scroll-smooth {
+  /* Scroll suave */
+  scroll-behavior: smooth;
+}
+
+@utility hide-scrollbar {
+  /* Hide scrollbar mas mantém funcionalidade */
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+@utility bg-pattern {
+  /* Background pattern (opcional para hero sections) */
+  background-image: radial-gradient(circle, #f3f4f6 1px, transparent 1px);
+  background-size: 20px 20px;
+}
+
+@utility shadow-soft {
+  /* Shadow personalizadas */
+  box-shadow:
+    0 2px 15px -3px rgba(0, 0, 0, 0.07),
+    0 10px 20px -2px rgba(0, 0, 0, 0.04);
+}
+
+@utility shadow-strong {
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+}
+
+@utility hover-lift {
+  /* Estados de hover para cards */
+  @apply transition-transform duration-200 hover:-translate-y-1;
+}
+
+@utility bg-gradient-ml {
+  /* Gradient backgrounds */
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+@utility text-responsive-lg {
+  /* Responsive text sizes */
+  @apply text-lg sm:text-xl lg:text-2xl;
+}
+
+@utility text-responsive-xl {
+  @apply text-xl sm:text-2xl lg:text-3xl;
+}
 
 /* ============================================================================
    ESTILOS GLOBAIS - MercadoLibre Clone
@@ -24,166 +207,12 @@
 
   /* Links com foco acessível */
   a:focus-visible {
-    @apply ring-2 ring-blue-500 ring-offset-2 outline-none;
+    @apply ring-2 ring-blue-500 ring-offset-2 outline-hidden;
   }
 
   /* Botões com foco acessível */
   button:focus-visible {
-    @apply ring-2 ring-blue-500 ring-offset-2 outline-none;
-  }
-}
-
-@layer components {
-  /* ========================================================================
-     COMPONENTES CUSTOMIZADOS
-     ======================================================================== */
-
-  /* Container responsivo padrão */
-  .container-ml {
-    @apply w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8;
-  }
-
-  /* Card base para produtos */
-  .product-card {
-    @apply bg-white rounded-lg shadow-sm border border-gray-200 hover:shadow-md transition-shadow duration-200;
-  }
-
-  /* Botão principal (MercadoLibre style) */
-  .btn-primary {
-    @apply bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-md transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed;
-  }
-
-  /* Botão secundário */
-  .btn-secondary {
-    @apply bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium py-2 px-4 rounded-md transition-colors duration-200;
-  }
-
-  /* Preço destacado */
-  .price-highlight {
-    @apply text-2xl font-bold text-gray-900;
-  }
-
-  /* Preço original (com desconto) */
-  .price-original {
-    @apply text-sm text-gray-500 line-through;
-  }
-
-  /* Badge de frete grátis */
-  .free-shipping-badge {
-    @apply inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800;
-  }
-
-  /* Rating com estrelas */
-  .rating-stars {
-    @apply flex items-center space-x-1 text-yellow-400;
-  }
-
-  /* Input de busca */
-  .search-input {
-    @apply w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all duration-200;
-  }
-
-  /* Loading spinner */
-  .loading-spinner {
-    @apply animate-spin rounded-full h-8 w-8 border-b-2 border-blue-500;
-  }
-
-  /* Skeleton loading */
-  .skeleton {
-    @apply animate-pulse bg-gray-200 rounded;
-  }
-
-  /* Grid responsivo de produtos */
-  .products-grid {
-    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6;
-  }
-
-  /* Filtros sidebar */
-  .filters-sidebar {
-    @apply space-y-6 p-4 bg-white rounded-lg shadow-sm border border-gray-200;
-  }
-
-  /* Breadcrumb navigation */
-  .breadcrumb {
-    @apply flex items-center space-x-2 text-sm text-gray-600;
-  }
-
-  .breadcrumb-item {
-    @apply hover:text-blue-600 transition-colors duration-200;
-  }
-
-  .breadcrumb-separator {
-    @apply text-gray-400;
-  }
-}
-
-@layer utilities {
-  /* ========================================================================
-     UTILITÁRIOS CUSTOMIZADOS
-     ======================================================================== */
-
-  /* Truncate com múltiplas linhas */
-  .line-clamp-2 {
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  .line-clamp-3 {
-    display: -webkit-box;
-    -webkit-line-clamp: 3;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-  }
-
-  /* Scroll suave */
-  .scroll-smooth {
-    scroll-behavior: smooth;
-  }
-
-  /* Hide scrollbar mas mantém funcionalidade */
-  .hide-scrollbar {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
-
-  .hide-scrollbar::-webkit-scrollbar {
-    display: none;
-  }
-
-  /* Background pattern (opcional para hero sections) */
-  .bg-pattern {
-    background-image: radial-gradient(circle, #f3f4f6 1px, transparent 1px);
-    background-size: 20px 20px;
-  }
-
-  /* Shadow personalizadas */
-  .shadow-soft {
-    box-shadow: 0 2px 15px -3px rgba(0, 0, 0, 0.07), 0 10px 20px -2px rgba(0, 0, 0, 0.04);
-  }
-
-  .shadow-strong {
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-  }
-
-  /* Estados de hover para cards */
-  .hover-lift {
-    @apply transition-transform duration-200 hover:-translate-y-1;
-  }
-
-  /* Gradient backgrounds */
-  .bg-gradient-ml {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  }
-
-  /* Responsive text sizes */
-  .text-responsive-lg {
-    @apply text-lg sm:text-xl lg:text-2xl;
-  }
-
-  .text-responsive-xl {
-    @apply text-xl sm:text-2xl lg:text-3xl;
+    @apply ring-2 ring-blue-500 ring-offset-2 outline-hidden;
   }
 }
 
