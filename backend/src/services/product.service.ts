@@ -2,23 +2,15 @@
 import path from "path";
 import fs from "fs/promises";
 import { PaginatedResponse, Product, ProductFilters } from "../types";
-// ============================================================================
-// PRODUCT SERVICE - Business logic for products
 
-
-// ===========================================================================
 class ProductService {
   private products: Product[] = []; // Product cache in memory
   private dataLoaded = false; // Flag to avoid reloading data
 
-  // ==========================================================================
-  // PRIVATE METHOD: Data Loading
-  // ==========================================================================
   private async loadData(): Promise<void> {
   if (this.dataLoaded) return
 
   try {
-    // Multiple path attempts
     const possiblePaths = [
       path.join(import.meta.dirname, '../data/products.json'),
       path.join(process.cwd(), 'src/data/products.json'),
@@ -29,7 +21,6 @@ class ProductService {
     let rawData: string | null = null
     let usedPath: string | null = null
 
-    // Try each path until you find the file
     for (const dataPath of possiblePaths) {
       try {
         console.log(`🔍 Trying to load: ${dataPath}`)
@@ -60,23 +51,16 @@ class ProductService {
   }
 }
 
-  // ==========================================================================
-  //  PUBLIC METHOD: Search All Products with Filters
-  // ==========================================================================
   async getAllProducts(filters: ProductFilters = {}, page = 1, limit = 10): Promise<PaginatedResponse<Product>> {
      await this.loadData();
 
      let filteredProducts = [...this.products];
 
-    // Apply filters
-
-    // Filter by category
     if (filters.category) {
       filteredProducts = filteredProducts.filter(p => p.category === filters.category);
       console.log(`🔍 Filtered by category: ${filters.category}: ${filteredProducts.length} products!`);
     }
 
-    // Filter by text search (title and description)
     if (filters.search) {
       const search = filters.search.toLowerCase()
       filteredProducts = filteredProducts.filter(p =>
@@ -86,25 +70,21 @@ class ProductService {
       console.log(`🔍 Search "${filters.search}": ${filteredProducts.length} products!`);
     }
 
-    // Filter by min price
     if (filters.minPrice) {
       filteredProducts = filteredProducts.filter(p => p.price >= filters.minPrice!);
       console.log(`🔍 Filtered by min price: ${filters.minPrice}: ${filteredProducts.length} products!`);
     }
 
-    // Filter by max price
     if (filters.maxPrice) {
       filteredProducts = filteredProducts.filter(p => p.price <= filters.maxPrice!);
       console.log(`🔍 Filtered by max price: ${filters.maxPrice}: ${filteredProducts.length} products!`);
     }
 
-    // Filter by free shipping
     if (filters.freeShipping) {
       filteredProducts = filteredProducts.filter(p => p.shipping.free);
       console.log(`🔍 Filtered by free shipping: ${filteredProducts.length} products!`);
     }
 
-    // Pagination
     const total = filteredProducts.length;
     const totalPages = Math.ceil(total / limit);
     const offset = (page - 1) * limit;
@@ -121,9 +101,6 @@ class ProductService {
     }
   }
 
-  // ==========================================================================
-  // PUBLIC METHOD: Search Product by ID
-  // ==========================================================================
   async getProductById(id: string): Promise<Product | null> {
     await this.loadData();
 
@@ -143,9 +120,6 @@ class ProductService {
     }
   }
 
-  // ==========================================================================
-  // PUBLIC METHOD: Get Available Categories
-  // ==========================================================================
   async getCategories(): Promise<string[]> {
     await this.loadData();
 
@@ -161,14 +135,10 @@ class ProductService {
     }
   }
 
-  // ==========================================================================
-  // PUBLIC METHOD: Apply Discount (for live coding)
-  // ==========================================================================
   async applyDiscount(productId: string, percentage: number): Promise<Product | null> {
     await this.loadData()
     
     try {
-      // Search for the product by ID
       const product = this.products.find(p => p.id === productId);
 
       if (!product) {
@@ -206,9 +176,6 @@ class ProductService {
     }
   }
 
-  // ==========================================================================
-  // PUBLIC METHOD: Statistics (useful for debugging)
-  // ==========================================================================
   async getStats() {
     await this.loadData();
 
